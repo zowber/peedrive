@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Peedrive
+Comment=Sync local folders with Proton Drive
+Exec=peedrive-app
+Icon=io.github.zowber.Peedrive
+Terminal=false
+Categories=Network;FileTransfer;GTK;
+Keywords=sync;drive;folders;Proton;
+StartupNotify=true

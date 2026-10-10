@@ -1,0 +1,45 @@
+[package]
+name = "peedrive"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "A native GNOME folder sync client for Proton Drive"
+
+[features]
+default = []
+gui = ["dep:gtk", "dep:adw"]
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.38", features = ["bundled"] }
+sha1 = "0.10"
+uuid = { version = "1", features = ["v4"] }
+walkdir = "2"
+globset = "0.4"
+clap = { version = "4", features = ["derive"] }
+zbus = { version = "5", features = ["blocking-api"] }
+notify = "8"
+libc = "0.2"
+gtk = { package = "gtk4", version = "0.11", features = ["v4_16"], optional = true }
+adw = { package = "libadwaita", version = "0.9", features = ["v1_6"], optional = true }
+
+[dev-dependencies]
+tempfile = "3"
+
+[[bin]]
+name = "peedrive"
+path = "src/bin/peedrive.rs"
+
+[[bin]]
+name = "peedrive-app"
+path = "src/bin/app.rs"
+required-features = ["gui"]
+
+[profile.dev]
+debug = 0
+
+[profile.release]
+strip = true
+lto = "thin"

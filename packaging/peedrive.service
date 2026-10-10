@@ -1,0 +1,19 @@
+[Unit]
+Description=Peedrive folder sync
+After=graphical-session-pre.target
+
+[Service]
+Type=dbus
+BusName=io.github.zowber.Peedrive.Sync
+ExecStart=/usr/bin/peedrive daemon
+Restart=on-failure
+RestartSec=10
+# SIGTERM reaches only the daemon, which stops between operations and lets the
+# SDK helper finish (and persist any refreshed session) before exiting.
+KillMode=mixed
+TimeoutStopSec=90
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

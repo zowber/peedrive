@@ -1,0 +1,13 @@
+[Unit]
+Description=Peedrive desktop status indicator
+After=graphical-session.target peedrive.service
+Wants=peedrive.service
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/usr/lib/peedrive/indicator.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=graphical-session.target

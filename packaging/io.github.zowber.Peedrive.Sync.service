@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=io.github.zowber.Peedrive.Sync
+Exec=/usr/bin/peedrive daemon
+SystemdService=peedrive.service

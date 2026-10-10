@@ -1,0 +1,8 @@
+/target/
+/dist/
+/node_modules/
+/vendor/proton-sdk/
+*.log
+__pycache__/
+*.pyc
+/docs/
