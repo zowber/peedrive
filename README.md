@@ -30,7 +30,7 @@ package do not need a JavaScript runtime installed.
 ## Install and run
 
 ```sh
-sudo apt install ./dist/peedrive_0.1.0~alpha8_amd64.deb
+sudo apt install ./dist/peedrive_0.1.0~alpha9_amd64.deb
 systemctl --user daemon-reload
 systemctl --user enable --now peedrive.service
 systemctl --user enable --now peedrive-indicator.service

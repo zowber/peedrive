@@ -229,6 +229,7 @@ pub fn daemon() -> Result<()> {
         },
         status: status.clone(),
         strict: BTreeSet::new(),
+        noted: BTreeSet::new(),
         applying: false,
         signing_out: false,
         notifier: Notifier::new(),
@@ -438,6 +439,8 @@ struct Daemon {
     applying: bool,
     signing_out: bool,
     notifier: Notifier,
+    /// "mapping id/path" of unselected local items already reported as not syncing.
+    noted: BTreeSet<String>,
 }
 impl Daemon {
     fn set(&self, id: &str, state: &str, message: String, plan: Option<Plan>) {
@@ -623,8 +626,76 @@ impl Daemon {
     }
     fn sync_mapping(&mut self, mapping: &Mapping) -> Result<Value> {
         self.applying = false;
+        // A failed check (offline, say) just means new items are picked up next pass.
+        let adopted = self.adopt_new_local_items(mapping).ok().flatten();
+        let mapping = adopted.as_ref().unwrap_or(mapping);
         let result = self.plan_and_apply(mapping);
         self.settle(mapping, result)
+    }
+    /// Anything created in the sync folder outside the selection, and not in Drive, joins the
+    /// selection so it uploads. Only the sync root and folders that lead to selected items are
+    /// searched; an unselected item with the same name as one in Drive is reported, not merged.
+    fn adopt_new_local_items(&mut self, mapping: &Mapping) -> Result<Option<Mapping>> {
+        let Some(selection) = &mapping.selection else {
+            return Ok(None);
+        };
+        local::verify_root(mapping)?;
+        let root = Path::new(&mapping.local);
+        let ignores = local::ignores(&mapping.ignores)?;
+        let mut added = Vec::new();
+        let mut queue = vec![String::new()];
+        while let Some(dir) = queue.pop() {
+            for entry in std::fs::read_dir(root.join(&dir))?.flatten() {
+                let Some(name) = entry.file_name().to_str().map(str::to_string) else {
+                    continue;
+                };
+                let path = if dir.is_empty() { name } else { format!("{dir}/{name}") };
+                let Ok(kind) = entry.file_type() else { continue };
+                if local::ignored(&path, &ignores)
+                    || local::selected(mapping, &path, false)
+                    || !(kind.is_dir() || kind.is_file())
+                    || local::validate_relative(&path).is_err()
+                {
+                    continue;
+                }
+                if local::selected(mapping, &path, true) {
+                    // Leads to a selected item: look inside for new siblings.
+                    if kind.is_dir() {
+                        queue.push(path);
+                    }
+                    continue;
+                }
+                if self.engine.remote.inspect(&mapping.remote, &path)?.is_none() {
+                    added.push(path);
+                } else if self.noted.insert(format!("{}/{path}", mapping.id)) {
+                    self.engine.store.event(
+                        "problem",
+                        Some(&path),
+                        &format!(
+                            "{path} is not syncing: an unselected Drive item has the same name. Tick it in Choose folders to merge them, or rename one."
+                        ),
+                    )?;
+                }
+            }
+        }
+        if added.is_empty() {
+            return Ok(None);
+        }
+        let mut updated = mapping.clone();
+        let mut paths = selection.clone();
+        for path in &added {
+            paths.push(path.clone());
+            self.engine.store.event(
+                "info",
+                Some(path),
+                &format!("Started syncing {path}, new on this computer"),
+            )?;
+        }
+        paths.sort();
+        updated.selection = Some(paths);
+        self.engine.store.save_mapping(&updated)?;
+        refresh_status(&self.engine.store, &self.status)?;
+        Ok(Some(updated))
     }
     fn plan_and_apply(&mut self, mapping: &Mapping) -> Result<Value> {
         self.set(

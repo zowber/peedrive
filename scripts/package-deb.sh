@@ -27,7 +27,7 @@ chmod -R go-w "$stage/usr/share/doc/peedrive"
 mkdir -p "$stage/DEBIAN" dist
 cat > "$stage/DEBIAN/control" <<'EOF'
 Package: peedrive
-Version: 0.1.0~alpha8
+Version: 0.1.0~alpha9
 Section: net
 Priority: optional
 Architecture: amd64
@@ -38,4 +38,4 @@ Description: Native GNOME folder sync client for Proton Drive
  Unofficial personal-use alpha client with local folder mappings,
  conflict preservation, GNOME Keyring sessions and a background sync service.
 EOF
-dpkg-deb --root-owner-group --build "$stage" dist/peedrive_0.1.0~alpha8_amd64.deb
+dpkg-deb --root-owner-group --build "$stage" dist/peedrive_0.1.0~alpha9_amd64.deb

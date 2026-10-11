@@ -158,6 +158,15 @@ with tempfile.TemporaryDirectory(prefix='peedrive-service-test-') as temporary:
         assert len(recovered)==1 and Path(recovered[0]['stored']).exists()
         cli('restore',str(recovered[0]['id']))
         assert (expected/'from-drive.txt').exists() and not Path(recovered[0]['stored']).exists()
+        # New local items outside the selection upload; a same-named unselected Drive item does not merge.
+        (expected/'Made here').mkdir(); (expected/'Made here'/'note.txt').write_text('new locally')
+        (remote/'Drive only').mkdir(); (remote/'Drive only'/'big.bin').write_text('remote content')
+        (expected/'Drive only').mkdir(); (expected/'Drive only'/'local.txt').write_text('local twin')
+        cli('sync',sid)
+        assert (remote/'Made here'/'note.txt').read_text()=='new locally','A new local folder was not uploaded'
+        assert 'Made here' in cli('status')['mappings'][0]['mapping']['selection']
+        assert not (remote/'Drive only'/'local.txt').exists() and not (expected/'Drive only'/'big.bin').exists()
+        assert any('Drive only is not syncing' in e['message'] for e in cli('status')['activity'])
         cli('remove',sid)
         live=cli('live-test')
         assert live['passed'] and live['mapping_paused']
@@ -175,7 +184,7 @@ with tempfile.TemporaryDirectory(prefix='peedrive-service-test-') as temporary:
             time.sleep(.1)
         daemon.terminate()
         assert daemon.wait(timeout=15)==0,'Daemon did not stop cleanly on SIGTERM'
-        print('PASS: daemon, D-Bus, CLI, first-sync review, overlap rejection, pause/resume, stale approval, conflicts, offline retry, renames, versions, speed limit, ignores, GNOME Files emblems and menu, disconnect and quit and clean shutdown')
+        print('PASS: daemon, D-Bus, CLI, first-sync review, overlap rejection, pause/resume, stale approval, conflicts, offline retry, renames, versions, speed limit, ignores, GNOME Files emblems and menu, new local items, disconnect and quit and clean shutdown')
     finally:
         daemon.terminate()
         try: daemon.wait(timeout=5)

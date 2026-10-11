@@ -402,7 +402,7 @@ pub fn build(app: &adw::Application) {
             adw::AboutDialog::builder()
                 .application_name("Peedrive")
                 .application_icon(peedrive::service::APP_ID)
-                .version("0.1.0 alpha 8")
+                .version("0.1.0 alpha 9")
                 .developer_name("Peedrive contributors")
                 .comments("An unofficial Proton Drive client for GNOME. Files stay end-to-end encrypted in Drive and appear on this computer as ordinary files.")
                 .license_type(gtk::License::MitX11)
