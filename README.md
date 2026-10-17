@@ -8,6 +8,13 @@ This is a personal-use alpha. Saved-session restoration and dedicated-folder
 Proton transfer/conflict checks have passed on the target machine. The local
 engine, SDK adapter, and service also have automated tests.
 
+![Overview: sync status and recently synced files](screenshots/overview.png)
+
+<img src="screenshots/folders.png" width="49%" alt="Choose folders"> <img src="screenshots/issues.png" width="49%" alt="Issues">
+<img src="screenshots/activity.png" width="49%" alt="Activity"> <img src="screenshots/setup.png" width="49%" alt="First-run sign-in">
+
+Screenshots use synthetic data. `scripts/check-ui.sh` regenerates them in `dist/`.
+
 ## Build on Ubuntu 26.04
 
 Install Rust through rustup and Bun 1.4.2. Rust is pinned by rust-toolchain.toml.
