@@ -32,12 +32,40 @@ sh scripts/package-deb.sh
 The SDK bootstrap checks out commit
 `8ffae007b0fbb8bcef53514719d6f093bb32dcf9`. Cargo.lock and bun.lock pin the
 remaining dependencies. The compiled helper embeds Bun, so users of the Debian
-package do not need a JavaScript runtime installed.
+or Arch package do not need a JavaScript runtime installed.
+
+## Build on Arch Linux
+
+Install Bun 1.4.2 (for example `curl -fsSL https://bun.sh/install | bash -s
+bun-v1.4.2`), then open a new terminal or run `exec zsh` so `bun` is on your
+PATH. The `rustup` package picks up the toolchain pinned by
+rust-toolchain.toml. Then:
+
+```sh
+sudo pacman -S --needed base-devel rustup git gtk4 libadwaita libsecret \
+  python-gobject gtk3 libayatana-appindicator nautilus-python xorg-server-xvfb
+sh scripts/bootstrap-sdk.sh
+sh scripts/build.sh
+sh scripts/package-arch.sh
+```
 
 ## Install and run
 
+On Ubuntu:
+
 ```sh
 sudo apt install ./dist/peedrive_0.1.0~alpha9_amd64.deb
+```
+
+On Arch Linux:
+
+```sh
+sudo pacman -U dist/peedrive-0.1.0alpha9-1-x86_64.pkg.tar.zst
+```
+
+Then on either:
+
+```sh
 systemctl --user daemon-reload
 systemctl --user enable --now peedrive.service
 systemctl --user enable --now peedrive-indicator.service

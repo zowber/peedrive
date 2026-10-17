@@ -2,10 +2,11 @@
 set -eu
 cd "$(dirname "$0")/.."
 mkdir -p dist
+export PATH="$HOME/.cargo/bin:$PATH"
 export GSK_RENDERER=cairo
 export PEEDRIVE_TEST_SCREENSHOTS="$PWD/dist"
 dbus-run-session --config-file=tests/dbus-session.conf -- sh scripts/headless.sh \
-  "$HOME/.cargo/bin/cargo" test --locked --features gui --bin peedrive-app -- --ignored
+  cargo test --locked --features gui --bin peedrive-app -- --ignored
 # scene:page pairs rendered against the synthetic service.
 for pair in setup:overview overview:overview syncing:overview folders:folders activity:activity issues:issues; do
   scene=${pair%%:*}
