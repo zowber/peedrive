@@ -17,7 +17,7 @@ Screenshots use synthetic data. `scripts/check-ui.sh` regenerates them in `dist/
 
 ## Build on Ubuntu 26.04
 
-Install Rust through rustup and Bun 1.4.2. Rust is pinned by rust-toolchain.toml.
+Install Rust through rustup and the latest Bun. Rust is pinned by rust-toolchain.toml.
 Then install native dependencies:
 
 ```sh
@@ -36,8 +36,8 @@ or Arch package do not need a JavaScript runtime installed.
 
 ## Build on Arch Linux
 
-Install Bun 1.4.2 (for example `curl -fsSL https://bun.sh/install | bash -s
-bun-v1.4.2`), then open a new terminal or run `exec zsh` so `bun` is on your
+Install the latest Bun (for example `curl -fsSL https://bun.sh/install | bash`),
+then open a new terminal or run `exec zsh` so `bun` is on your
 PATH. The `rustup` package picks up the toolchain pinned by
 rust-toolchain.toml. Then:
 

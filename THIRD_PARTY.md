@@ -18,9 +18,10 @@ their sources are in Cargo.lock. Dependency license files are available in
 node_modules and the Cargo registry after bootstrap. The native UI links GTK4
 and libadwaita supplied by the operating system.
 
-The package includes collected dependency notices and Bun 1.4.2's license
+The package includes collected dependency notices and Bun's license
 notice. It also includes the uncompiled helper bundle at
 `/usr/lib/peedrive/peedrive-adapter.js`, which can be run with a separately built
 or modified Bun runtime. Bun source is available at
-https://github.com/oven-sh/bun/tree/bun-v1.4.2 and the full helper source and
-dependency lockfiles are in this project.
+https://github.com/oven-sh/bun (use the `bun-v<version>` tag matching the Bun that
+built the package) and the full helper source and dependency lockfiles are in
+this project.
